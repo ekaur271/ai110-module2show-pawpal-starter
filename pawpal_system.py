@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
-from datetime import datetime, time
+from datetime import datetime, time, date, timedelta
 
 
 def parse_time(t: str) -> time:
@@ -27,6 +27,7 @@ class Task:
     frequency: str         # "daily", "weekly", etc.
     time_preference: Optional[str] = None   # "morning", "afternoon", "evening"
     status: str = "incomplete"
+    due_date: Optional[str] = None          # "YYYY-MM-DD", set when task is scheduled
 
     def assign_priority(self, priority: str):
         """Set the priority level of this task."""
@@ -51,6 +52,24 @@ class Task:
     def mark_incomplete(self):
         """Mark this task as incomplete."""
         self.status = "incomplete"
+
+    def next_occurrence(self, from_date: str) -> Optional["Task"]:
+        """Return a new incomplete Task instance due on the next occurrence based on frequency."""
+        FREQUENCY_DELTAS = {"daily": timedelta(days=1), "weekly": timedelta(weeks=1)}
+        delta = FREQUENCY_DELTAS.get(self.frequency)
+        if delta is None:
+            return None
+        next_date = datetime.strptime(from_date, "%Y-%m-%d").date() + delta
+        return Task(
+            name=self.name,
+            type=self.type,
+            priority=self.priority,
+            duration=self.duration,
+            frequency=self.frequency,
+            time_preference=self.time_preference,
+            status="incomplete",
+            due_date=str(next_date)
+        )
 
 
 @dataclass
@@ -125,11 +144,14 @@ class ScheduledTask:
     start_time: str        # e.g. "08:00"
     end_time: str          # e.g. "08:30"
     is_complete: bool = False
+    next_task: Optional["Task"] = field(default=None, repr=False)
 
-    def mark_complete(self):
-        """Mark this scheduled task and its underlying task as complete."""
+    def mark_complete(self, on_date: Optional[str] = None):
+        """Mark this scheduled task complete and generate the next occurrence if recurring."""
         self.is_complete = True
         self.task.mark_complete()
+        if on_date:
+            self.next_task = self.task.next_occurrence(on_date)
 
     def update_start(self, start_time: str):
         """Update the scheduled start time."""
@@ -156,6 +178,14 @@ class DayPlan:
         total = len(self.scheduled_tasks)
         complete = sum(1 for st in self.scheduled_tasks if st.is_complete)
         return {"total": total, "complete": complete, "remaining": total - complete}
+
+    def filter_tasks(self, status: str = "all") -> List[ScheduledTask]:
+        """Return scheduled tasks filtered by completion status: 'complete', 'incomplete', or 'all'."""
+        if status == "complete":
+            return [st for st in self.scheduled_tasks if st.is_complete]
+        elif status == "incomplete":
+            return [st for st in self.scheduled_tasks if not st.is_complete]
+        return self.scheduled_tasks
 
     def display(self):
         """Print the day's schedule and completion status to the terminal."""
@@ -239,6 +269,33 @@ class Scheduler:
             current += 15
 
         return None
+
+    def detect_conflicts(self, *plans: DayPlan) -> List[str]:
+        """Check one or more DayPlans for overlapping task times and return warning messages."""
+        warnings = []
+        all_scheduled = []
+        for plan in plans:
+            for st in plan.scheduled_tasks:
+                all_scheduled.append((plan.pet.name, st))
+
+        for i in range(len(all_scheduled)):
+            pet_a, task_a = all_scheduled[i]
+            for j in range(i + 1, len(all_scheduled)):
+                pet_b, task_b = all_scheduled[j]
+                a_start = time_to_minutes(task_a.start_time)
+                a_end   = time_to_minutes(task_a.end_time)
+                b_start = time_to_minutes(task_b.start_time)
+                b_end   = time_to_minutes(task_b.end_time)
+                if not (a_end <= b_start or b_end <= a_start):
+                    warnings.append(
+                        f"⚠ CONFLICT: '{task_a.task.name}' ({pet_a}, {task_a.start_time}–{task_a.end_time}) "
+                        f"overlaps with '{task_b.task.name}' ({pet_b}, {task_b.start_time}–{task_b.end_time})"
+                    )
+        return warnings
+
+    def sort_by_time(self, plan: DayPlan) -> List[ScheduledTask]:
+        """Return the plan's scheduled tasks sorted by start time (earliest first)."""
+        return sorted(plan.scheduled_tasks, key=lambda st: time_to_minutes(st.start_time))
 
     def explain_plan(self, plan: DayPlan) -> str:
         """Return a human-readable explanation of why each task was scheduled when it was."""

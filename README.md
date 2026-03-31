@@ -22,6 +22,17 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Smarter Scheduling
+
+PawPal+ goes beyond a basic task list with several intelligent scheduling features:
+
+- **Priority-based scheduling** — tasks are sorted high → medium → low before being placed, so critical needs like feeding and medication always get a slot first.
+- **Availability-aware slot finding** — the scheduler scans the day in 15-minute increments and skips any window that overlaps with the owner's busy blocks (e.g. a 9–5 work schedule).
+- **Time preference windows** — tasks can specify morning (8–12), afternoon (12–17), or evening (17–22), and the scheduler searches within that window first.
+- **Conflict detection** — after building schedules for multiple pets, the app automatically checks for overlapping task times and surfaces warnings.
+- **Recurring task generation** — when a daily or weekly task is marked complete, a new instance is automatically created with the next due date using Python's `timedelta`.
+- **Sorting and filtering** — the task list can be filtered by type and sorted by priority, duration, or name; the schedule view can be sorted by time or priority.
+
 ## Getting started
 
 ### Setup

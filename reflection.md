@@ -47,10 +47,14 @@ Yeah but only once, I think I started with a very good setup so it didnt need mu
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
 
+Basically we consider the owner's work schedule or busy time, each tasks time preference like morning, afternoon, evening and the priority of the task. Priority matters teh most since those items would be handled with more importance than work. So tasks like feeding or medication gets scheduled before teh lower priority tasks like grooming and stuff. Time preference comes after that to really fit to the app user's life and to make the map more useful overall. 
+
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+
+One tradeoff made is having the scheduler scan for open slots in 15 minute increments. This means that if there is a free window that starts at 8:05 it gets skipped. I feel like for pet care tasks precision of time isn't that essential and 15 minute chunks is ok. 
 
 ---
 
