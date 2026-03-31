@@ -14,6 +14,28 @@
 
 ---
 
+Three Core Actions User Should Be Able To Perform: 
+- Register a pet, including adding care needs for the pet with frequency and priority.
+- See a task list/daily schedule and be able to mark tasks complete.
+- Be able to input your availability so tasks can be scheduled around your schedule but in a way the pet's priorities are taken care of.
+
+Brainstorm of Main Objects: 
+- Pet
+- Task
+- User's Schedule Items
+- Day (Schedule)
+
+Main Objects with Attributes + Methods
+- Pet (Name, Species, Age, Care_Tasks) [UpdateAge, GetAllTasks, AddCareTask, RemoveCareTask]
+- Task (Name, Type, Priority, Duration, Frequency, Time_Preference, Status) [AssignPriority, AssignDuration, AssignFrequency, AssignTimePreference, MarkComplete, MarkIncomplete]
+- Owner (Name, Availability) [AddAvailability, GetFreeSlots]
+- AvailabilityBlock (Label, Start_Time, End_Time, Frequency) [UpdateStart, UpdateEnd, AddFrequency]
+- ScheduledTask (Task, Start_Time, End_Time, Is_Complete) [MarkComplete, UpdateStart, UpdateFinish]
+- DayPlan (Date, Owner, Pet, Scheduled_Tasks) [AddTask, GetCompletionStatus, Display]
+- Scheduler (Owner, Pet, Date, Day_Start, Day_End) [BuildSchedule, PrioritizeTasks, FindAvailableSlot, ExplainPlan]
+
+
+
 ## 2. Scheduling Logic and Tradeoffs
 
 **a. Constraints and priorities**
