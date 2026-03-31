@@ -33,6 +33,27 @@ PawPal+ goes beyond a basic task list with several intelligent scheduling featur
 - **Recurring task generation** — when a daily or weekly task is marked complete, a new instance is automatically created with the next due date using Python's `timedelta`.
 - **Sorting and filtering** — the task list can be filtered by type and sorted by priority, duration, or name; the schedule view can be sorted by time or priority.
 
+## Testing PawPal+
+
+```bash
+python -m pytest tests/test_pawpal.py -v
+```
+
+The test suite covers 12 behaviors across happy paths and edge cases:
+
+- **Task completion** — marking a task complete changes its status, and marking it incomplete resets it cleanly
+- **Pet task management** — adding a task to a pet correctly increases its task count
+- **Priority ordering** — the scheduler always places high priority tasks before low priority ones
+- **Availability conflict avoidance** — no task gets scheduled inside the owner's busy block
+- **Sorting correctness** — `sort_by_time` returns tasks in chronological order regardless of input order
+- **Recurrence logic** — daily tasks generate a next occurrence for the following day, weekly for 7 days out, and "as needed" tasks return nothing
+- **Conflict detection** — overlapping tasks are flagged with a warning; back-to-back tasks are not
+- **Edge cases** — empty pet task list, fully blocked day, and resetting completion state all behave correctly
+
+**Confidence level: ⭐⭐⭐⭐ (4/5)**
+
+The core scheduling logic, priority system, and recurring tasks are well tested and reliable. I'd give it a 5 if I had tests covering the time preference windows more thoroughly and multi-pet conflict detection across separate plans.
+
 ## Getting started
 
 ### Setup
