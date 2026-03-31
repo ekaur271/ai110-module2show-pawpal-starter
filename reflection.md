@@ -65,10 +65,15 @@ One tradeoff made is having the scheduler scan for open slots in 15 minute incre
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
+I used it a lot to brainstorm, sort of like a partner who knows everything going on. I would write some things down or put some of my ideas down and be like what do you think, and then I would either agree or disagree with the AI and we would drop it or further discuss. I think I really like using prompts like use the perspective of a senior software engineers, ensure following good coding practicies, make sure things are neat and easy to follow, or from the perspective of a UX designer. Things like that are really helpful. 
+
+
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
+
+I think a lot of the times I ask AI to tell me what its going to do or disucss first before making changes and that way I can disagree without worrying about rollback. It also helps me evaluate and verify what its doing and ensuring that we both are on the same page. 
 
 ---
 
@@ -79,10 +84,16 @@ One tradeoff made is having the scheduler scan for open slots in 15 minute incre
 - What behaviors did you test?
 - Why were these tests important?
 
+We tested 43 behaviors across every major class: task lifecycle (complete/incomplete/recurrence), pet CRUD, JSON persistence roundtrip, availability conflict detection, the full scheduling algorithm (priority ordering, busy block avoidance, time preference windows), the energy curve (species-based defaults), task batching and batch splitting, day load detection with deferral suggestions, cross-pet conflict detection with resolution suggestions, sort order, and explain output.
+
+These tests mattered because the scheduler has several interacting systems that were easy to break when adding or making changes so these ensured the basic functionality was still in place, I also made sure to go back and add test cases after every major implementation. 
+
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
+
+I think the core scheduling logic is solid, I tried to keep it simple while making sure all the moving parts worked well together so that everything was clean, smooth, and functional. I think maybe api tests or checking the fall back options for when a task's preferred window is entirely blocked and when tasks are longer than available gaps and things like that. 
 
 ---
 
@@ -92,10 +103,41 @@ One tradeoff made is having the scheduler scan for open slots in 15 minute incre
 
 - What part of this project are you most satisfied with?
 
+I think I'm really satisfied with the UI, I even added a night mode, though I havent tested that part yet. 
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+Maybe an autosync with another calendar would be really cool and helpful to the owner. And of course having this available as an app on a phone would be helpful too. 
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+Go step by step, and really know what the AI is about to do. Commit after every feature is polished and then move on to next feature it really helps keep the context focused and as you want it I think.
+
+---
+
+## 6. Prompt Comparison — Multi-Model Analysis
+
+**Task tested:** Implement a `next_occurrence` method on a `Task` dataclass that returns a new Task due on the next date based on frequency (daily = +1 day, weekly = +7 days, as needed = None).
+
+---
+
+**ChatGPT (GPT-4o)**
+
+Went with a basic if/elif chain, readable but not very extensible. Adding a new frequency means going back into the method which isnt great. Also missed resetting status to incomplete on the new task, which matters a lot here.
+
+**Gemini**
+
+Had the most interesting approach, used `frozen=True` with `replace()` so you dont have to pass every field to the constructor again, pretty clean. But frozen=True would break the app since tasks need to be mutated when marking complete. Good idea wrong context.
+
+**Claude**
+
+Used a `FREQUENCY_DELTAS` dict at the module level and just calls `.get()` on it. Adding a new frequency is one line, no method changes needed. Also the only one that reset status to incomplete and kept all the fields. Tradeoff is unknown frequencies fail silently which is less explicit than chatgpts error raise.
+
+---
+
+**Which was most Pythonic?**
+
+Depends on context honestly. Gemini's pattern is cleaner in isolation but doesnt fit the codebase. Claude's fits how the rest of the system is built. Chatgpt's is easiest to read but hardest to grow. None of them are wrong, they just didnt have full context so they solved a slightly different version of the problem.

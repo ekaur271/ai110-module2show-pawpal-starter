@@ -6,16 +6,16 @@ jordan.add_availability(AvailabilityBlock(label="Work", start_time="09:00", end_
 
 # --- Pet 1: Mochi (tasks added OUT OF ORDER intentionally) ---
 mochi = Pet(name="Mochi", species="dog", age=3)
-mochi.add_care_task(Task(name="Grooming",     type="hygiene",   priority="low",    duration=20, frequency="weekly", time_preference="afternoon"))
-mochi.add_care_task(Task(name="Evening Walk", type="exercise",  priority="medium", duration=30, frequency="daily",  time_preference="evening"))
-mochi.add_care_task(Task(name="Feeding",      type="nutrition", priority="high",   duration=10, frequency="daily",  time_preference="morning"))
-mochi.add_care_task(Task(name="Morning Walk", type="exercise",  priority="high",   duration=30, frequency="daily",  time_preference="morning"))
+mochi.add_care_task(Task(name="Grooming",     task_type="hygiene",   priority="low",    duration=20, frequency="weekly", time_preference="afternoon"))
+mochi.add_care_task(Task(name="Evening Walk", task_type="exercise",  priority="medium", duration=30, frequency="daily",  time_preference="evening"))
+mochi.add_care_task(Task(name="Feeding",      task_type="nutrition", priority="high",   duration=10, frequency="daily",  time_preference="morning"))
+mochi.add_care_task(Task(name="Morning Walk", task_type="exercise",  priority="high",   duration=30, frequency="daily",  time_preference="morning"))
 
 # --- Pet 2: Luna ---
 luna = Pet(name="Luna", species="cat", age=5)
-luna.add_care_task(Task(name="Playtime",   type="enrichment", priority="low",    duration=15, frequency="daily",  time_preference="evening"))
-luna.add_care_task(Task(name="Litter Box", type="hygiene",    priority="medium", duration=10, frequency="daily",  time_preference="afternoon"))
-luna.add_care_task(Task(name="Feeding",    type="nutrition",  priority="high",   duration=10, frequency="daily",  time_preference="morning"))
+luna.add_care_task(Task(name="Playtime",   task_type="enrichment", priority="low",    duration=15, frequency="daily",  time_preference="evening"))
+luna.add_care_task(Task(name="Litter Box", task_type="hygiene",    priority="medium", duration=10, frequency="daily",  time_preference="afternoon"))
+luna.add_care_task(Task(name="Feeding",    task_type="nutrition",  priority="high",   duration=10, frequency="daily",  time_preference="morning"))
 
 today = "2026-03-30"
 
@@ -89,8 +89,8 @@ fake_pet = Pet(name="TestPet", species="dog", age=1)
 fake_scheduler = Scheduler(owner=fake_owner, pet=fake_pet, date=today)
 
 conflict_plan = DayPlan(date=today, owner=fake_owner, pet=fake_pet)
-task_a = Task(name="Morning Walk", type="exercise", priority="high", duration=30, frequency="daily")
-task_b = Task(name="Feeding",      type="nutrition", priority="high", duration=10, frequency="daily")
+task_a = Task(name="Morning Walk", task_type="exercise", priority="high", duration=30, frequency="daily")
+task_b = Task(name="Feeding",      task_type="nutrition", priority="high", duration=10, frequency="daily")
 
 # Force both to start at 08:00 — intentional conflict
 conflict_plan.add_task(ScheduledTask(task=task_a, start_time="08:00", end_time="08:30"))
