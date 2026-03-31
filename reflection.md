@@ -2,18 +2,6 @@
 
 ## 1. System Design
 
-**a. Initial design**
-
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
-
-**b. Design changes**
-
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
-
----
-
 Three Core Actions User Should Be Able To Perform: 
 - Register a pet, including adding care needs for the pet with frequency and priority.
 - See a task list/daily schedule and be able to mark tasks complete.
@@ -34,6 +22,22 @@ Main Objects with Attributes + Methods
 - DayPlan (Date, Owner, Pet, Scheduled_Tasks) [AddTask, GetCompletionStatus, Display]
 - Scheduler (Owner, Pet, Date, Day_Start, Day_End) [BuildSchedule, PrioritizeTasks, FindAvailableSlot, ExplainPlan]
 
+**a. Initial design**
+
+- Briefly describe your initial UML design.
+- What classes did you include, and what responsibilities did you assign to each?
+
+My initial brainstorm had 4 objects pet, task, user's schedule items and day or schedule. The idea was pet had to have an entity and each task needed one. I wanted to have the user's scheudle so that would be one and there should be like a day with all its items. After that I mainly just brainstormed basic items and then I talked to claude for a bit. Now its what you see above. The parenthesis are the attributes and the brackets are the methods to mostly set those attributes. 
+
+
+**b. Design changes**
+
+- Did your design change during implementation?
+- If yes, describe at least one change and why you made it.
+
+Yeah but only once, I think I started with a very good setup so it didnt need much change. I think I mostly added the Day start and Day end to scheduler since that was also needed. This particular bottleneck was identified with the help of claude. 
+
+---
 
 
 ## 2. Scheduling Logic and Tradeoffs
